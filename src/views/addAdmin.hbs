@@ -1,0 +1,78 @@
+<div class="container">
+  <h1>REGISTERATION FORM</h1>
+  <form id="admin-form" action="{{action}}" method="{{method}}" _method="{{method}}">
+
+    <label for="fname">Mail address:</label>
+    <br />
+    <input type="text" id="fname" name="email" placeholder="Email" required />
+    <br />
+    <br />
+    <label for="fname">First Name:</label>
+    <br />
+    <input type="text" id="fname" name="firstname" placeholder="Firstname" required />
+    <br />
+    <br />
+    <label for="fname">Last Name:</label>
+    <br />
+    <input type="text" id="fname" name="lastname" placeholder="LastName" required />
+    <br />
+    <br />
+    <label for="lname">Password:</label>
+    <br />
+    <input type="password" id="lname" name="passwordHash" placeholder=" password" required />
+    <br />
+    <br />
+
+    <input class="btn btn-primary" type="submit" value="submit" />
+  </form>
+</div>
+<script>
+  const $addAdminForm = document.querySelector("#admin-form");
+
+  $addAdminForm.addEventListener("submit", event => {
+    event.preventDefault();
+
+    const submitUrl = $addAdminForm.action;
+    const submitMethod = $addAdminForm.getAttribute("_method");
+    const formData = new FormData($addAdminForm);
+    let admindDetail = {};
+    for (const fields of formData.entries()) {
+      const [key, value] = fields;
+      admindDetail[key] = value;
+    }
+
+    const config = {
+      method: submitMethod.toUpperCase(),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(admindDetail)
+    }
+    console.log(config);
+    console.log(submitUrl);
+    fetch(submitUrl, config)
+      .then(response => {
+        if (response.status === 200) {
+          return response.json()
+        } else {
+          throw (new Error(response.status))
+        }
+      })
+      .then(data => {
+        alert(data.message);
+        window.location.href = "/"
+      })
+      .catch(error => {
+        switch (error.message) {
+          case "400":
+            alert("Please check form values...");
+            break;
+          case "500":
+            alert("Please Try after some time...");
+            break;
+          default:
+            console.error(error);
+        }
+      })
+  });
+</script>

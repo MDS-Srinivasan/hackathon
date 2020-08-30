@@ -1,0 +1,84 @@
+<div id="login">
+  <h3 class="text-center text-white pt-5">Login form</h3>
+  <div class="container">
+    <div id="login-row" class="row justify-content-center align-items-center">
+      <div id="login-column" class="col-md-6">
+        <div id="login-box" class="col-md-12">
+          <form id="login-form" class="form" action="{{submitTarget}}" method="{{submitMethod}}">
+            <h3 class=" text-center text-info">Login</h3>
+            <div class="form-group">
+              <label for="username" class="text-info">Email address:</label><br>
+              <input type="text" name="email" id="username" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="password" class="text-info">Password:</label><br>
+              <input type="password" name="password" id="password" class="form-control">
+            </div>
+            <div class="form-group">
+
+              <input type="submit" name="submit" class="btn btn-info btn-md" value="submit">
+              <label for="Or" class="text-info">OR</label>
+              <a href="/gmaillogin" class="btn btn-info btn-md">Login with GMAIL</a>
+
+            </div>
+            <div id="register-link" class="text-right">
+              <a href="/adminReg" class="text-info">Register here</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const $loginForm = document.querySelector("#login-form");
+
+  $loginForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const submitUrl = $loginForm.action;
+    const submitMethod = $loginForm.method;
+    const formData = new FormData($loginForm);
+    let loginDetails = {};
+    for (const fields of formData.entries()) {
+      const [key, value] = fields;
+      loginDetails[key] = value;
+    }
+
+    const config = {
+      method: submitMethod.toUpperCase(),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(loginDetails)
+    }
+
+    fetch(submitUrl, config)
+      .then(response => {
+        if (response.status === 200) {
+          return response.json()
+        } else {
+          throw (new Error(response.status))
+        }
+      })
+      .then((data) => {
+        alert(data.message);
+        window.location.href = "/post"
+      })
+      .catch(error => {
+        switch (error.message) {
+          case "401":
+          case "400":
+            alert("Please check form values and if registered already please verify in your mail");
+            break;
+          case "500":
+            alert("Please Try after some time...");
+            break;
+          default:
+            console.error(error);
+        }
+
+      })
+  })
+</script>
